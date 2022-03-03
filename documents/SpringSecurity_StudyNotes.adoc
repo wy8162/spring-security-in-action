@@ -1,0 +1,107 @@
+= Studying Book "Spring Security in Action"
+
+== Basic Case Study
+With the following dependency being added, Spring Boot automatically enables security for the Web Application and automatically generates a password when it starts for user "user".
+
+To consume the service:
+
+```
+curl -u user:e89b5304-f2d7-4b58-b6cd-1cf23f71c747 http://localhost:8080/hello/yang
+```
+
+Behind the scene, curl uses Basic authentication to send the request. Curl will encode "user:e89b5304-f2d7-4b58-b6cd-1cf23f71c747" with Base64 encoding and send it as Basic. See below:
+
+```
+curl -X GET --location "http://localhost:8080/hello/yang" \
+    -H "Authorization: Basic dXNlcjo5ZjIxY2ZkYi0zZjBkLTQ3OTgtODA5ZC1lYmNiMTgzNDE5ZDY="
+```
+
+We can use the following to encode:
+```
+echo -n user:9f21cfdb-3f0d-4798-809d-ebcb183419d6 | base64
+```
+
+== Authentication
+
+- Basic Authentication - only requires the client to send username and password through the HTTP "Authorization" header.
+
+The authentication and authorization work the same way for both HTTP and HTTPS.
+
+== Using HTTPS with Generated Self-Signed Certificates
+```
+# Generates private key key.pem and public certificate cert.pem.
+openssl req -newkey rsa:2048 -x509 -keyout key.pem -out cert.pem -days 365
+
+# Generate a self-signed certificate, certificate.p12
+openssl pkcs12 -export -in cert.pem -inkey key.pem -out certificate.p12 -name "certificate"
+```
+
+And then make the changes to application.properties
+```
+
+```
+
+Copy these files to resources folder and restart the server. The server will now listen to HTTPS with port 8443.
+
+Use the following command to test it. The "-k" is to skip testing the authenticity of the certificate because we are using self-signed certificate.
+
+```
+curl -k -X GET --location "https://localhost:8443/hello/yang" --basic --user user:b5cdded7-b713-475c-92cc-9262e80a6277
+```
+
+== Replacing the Default UserDetailService and PasswordEncoder
+
+[NOTE]
+====
+To run the examples below, define either JVM variables or system environment variables:
+
+- test.username
+- test.password
+====
+
+
+- We will use Spring InMemoryUserDetailsManager to replace the default UserDetailService.
+- We use NoOpPasswordEncoder as PasswordEncoder. Otherwise, it will fail.
+
+See SecurityConfiguration.java for details.
+
+Test it:
+
+```
+ curl -k -u wyang:1234 https://localhost:8443/hello/jack
+```
+
+== Secure Endpoints - Implementing UserDetailsService and PasswordEncoder
+We may or may not need to secure all the endpoints.
+
+Let's modify `SecurityConfiguration.java` and make it to extend #WebSecurityConfigurerAdapter#.
+
+```
+        // All requests require authentication
+        http.authorizeRequests()
+            .anyRequest()
+            .authenticated();
+
+Or
+
+        // Permit all. No security
+        http.authorizeRequests()
+            .anyRequest()
+            .permitAll();
+
+```
+
+`SecurityConfiguration_v2.java ` is another way to achieve the same.
+
+=== Implementing AuthenticationProvider
+
+Authentication Provider implements the authentication logic and delegates to UserDetailsService and PasswordEncoder.
+
+See CustomAuthenticationProvider.
+
+== Implementation of Spring Security Authentication
+
+- UserDetails - describe the user for Spring Security.
+- GrantedAuthority - defines actions that the user can execute.
+- UserDetailsManager - implements the contract of UserDetailsService, plus methods for creating, deleting users, etc.
+

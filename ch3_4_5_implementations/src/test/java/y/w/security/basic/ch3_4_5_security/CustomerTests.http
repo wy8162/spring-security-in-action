@@ -1,0 +1,4 @@
+GET https://localhost:8443/api/customer
+Authorization: Basic d3lhbmc6MTIzNA==
+
+###

@@ -1,0 +1,13 @@
+###
+# Spring automatically generate a password for user.
+#
+# curl -u user:e89b5304-f2d7-4b58-b6cd-1cf23f71c747 http://localhost:8080/hello/yang
+# curl -k -X GET --location "https://localhost:8443/hello/yang" --basic --user user:b5cdded7-b713-475c-92cc-9262e80a6277
+GET https://localhost:8443/hello/yang
+Authorization: Basic user 0e3414c8-e9ff-4a3d-b19f-e454673dea1a
+
+###
+# Alternatively, use the following command to encode the user name and password:
+# echo -n user:9f21cfdb-3f0d-4798-809d-ebcb183419d6 | base64
+GET http://localhost:8080/hello/yang
+Authorization: Basic dXNlcjo5ZjIxY2ZkYi0zZjBkLTQ3OTgtODA5ZC1lYmNiMTgzNDE5ZDY=

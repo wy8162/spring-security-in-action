@@ -1,0 +1,43 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+!theme mars
+
+title Client to Website to Authorization Server
+
+autonumber
+
+actor User as U
+participant Service as S
+participant "Authorization Server" as AS
+participant "Resource Server" as RS
+
+U -> S: click link
+S -> AS: request for Authorization Code
+rnote over AS
+GET /authorize
+?response_type=code
+&client_id=<client_id>
+&redirect_url=<redirect_url>
+&state=hkdsmslld
+&scope=<scopes>
+endrnote
+AS --> U: present login page for login
+U -> AS: user logs in
+AS --> U: present consent page
+U -> AS: user authorize website to access the requested information
+AS --> S: Authorization code\nredirect_url?code=<authorization code>\n&state=<state>
+S -> AS: Exchange authorization code for access token\n HTTP POST /token+Code+Client Id+Client Secret
+rnote over AS
+POST /token
+?grant_type=authorization_code
+&client_id=<client_id>
+&client_secret=<secret>
+&code=<code from previous request>
+&redirect_url=<redirect_url>
+endrnote
+AS --> S: Response with Access Token + Refresh Token
+S -> RS: Request data with an Access Token
+RS -> AS: Validate Access Token
+AS -> RS: Valid
+RS --> S: Data requested
+@enduml

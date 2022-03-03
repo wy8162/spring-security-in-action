@@ -1,0 +1,35 @@
+@startuml
+'https://plantuml.com/class-diagram
+!theme mars
+
+interface UserDetailsService {
+  +loadUserByUsername(String username): UserDetails
+}
+
+interface UserDetails {
+  +getUsername(): String
+  +getPassword(): String
+  +getAuthorities(): Collection<? extends GrantedAuthority>
+  +isAccountNonExpired(): boolean
+  +isAccountNonLocked(): boolean
+  +isCredentialsNonExpired(): boolean
+  +isEnabled(): boolean
+}
+
+interface GrantedAuthority {
+  +getAuthority(): String
+}
+
+interface UserDetailsManager {
+  +createUser(UserDetails user): void
+  +updateUser(UserDetails user): void
+  +deleteUser(String username): void
+  +changePassword(String oldPassword, String newPassword):void
+  +userExists(String username): boolean
+}
+
+UserDetailsManager --|> UserDetailsService: Extends >
+UserDetailsService ..> UserDetails: Uses >
+UserDetails "1" *-- "*" GrantedAuthority: Contains >
+
+@enduml

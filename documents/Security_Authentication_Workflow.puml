@@ -1,0 +1,13 @@
+@startuml
+!theme mars
+
+[*] --> AuthorizationProvider
+AuthorizationProvider --> UserDetailsService: 1. Loads the user
+UserDetailsService --> AuthenticationException: User does not exist
+UserDetailsService --> AuthorizationProvider: 2. Return UserDetails
+AuthorizationProvider --> PasswordEncoder: 3. Check if password matches
+PasswordEncoder --> AuthorizationProvider: 4. Password DOES not match
+AuthorizationProvider --> Continue: 5. Password matches
+AuthorizationProvider --> BadCredentialException: Password does not match
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/class-diagram
+!theme mars
+
+interface Principal {
+  +getName()
+}
+
+interface Authentication {
+  +getCredentials()
+  +getAuthorities() : password, code, or fingerprints, etc.
+  +getDetails()
+  +isAuthenticated()
+}
+
+interface AuthenticationProvider {
+  +authenticate(Authentication): Authentication
+  +supports(Class<?> authentication): boolean
+}
+
+Authentication --|> Principal: Extends >
+
+@enduml

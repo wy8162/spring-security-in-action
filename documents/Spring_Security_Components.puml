@@ -1,0 +1,24 @@
+@startuml
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+!theme mars
+
+Person(client, "Client", "Users who consume the services")
+System(af, "Authentication Filter", "Intercepts requests")
+System(sc, "Security Context", "Keeps details about authenticated entities after authentication")
+System(am, "Authentication Manager", "Responsible for authentication")
+System(ap, "Authentication Provider", "Implementation of authentication logic")
+Component(user, "User Detail Service", "User details")
+Component(encoder, "Password Encoder", "Password encoder")
+
+Rel_Down(client, af, "Requests to consume service")
+Rel_Right(af, sc, "Details about the authenticated entity")
+Rel_Down(af, am, "Delegates the authentication request to authentication manager")
+Rel_Down(am, ap, "Uses Authentication Provider to process the authentication")
+Rel_Up(am, af, "Result")
+Rel_Up(ap, am, "Result of authentication")
+Rel_Right(ap, user, "Find users")
+Rel_Right(ap, encoder, "Check, validate and encode passwords")
+
+@enduml
